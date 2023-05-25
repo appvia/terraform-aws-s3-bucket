@@ -25,11 +25,21 @@ jobs:
     name: Github Release
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    container:
+      env
+        WAYFINDER_TOKEN: ${{ secrets.WAYFINDER_TOKEN }}
+        WAYFINDER_SERVER: ${{ vars.WAYFINDER_SERVER }}
+        WAYFINDER_VERSION: ${{ vars.WAYFINDER_VERSION || 'latest' }}
+        WAYFINDER_TOOLBOX_REPO: ${{ vars.WAYFINDER_TOOLBOX_REPO || 'appvia-wayfinder' }}
+      image: quay.io/${{vars.WAYFINDER_TOOLBOX_REPO || 'appvia-wayfinder'}}/wftoolbox:${{vars.WAYFINDER_VERSION || 'latest'}}
     steps:
       - name: Clone repo
         uses: actions/checkout@v3
+      - name: Apply platform changes
+        run: wf apply -f cloudresourceplan --wait-for-ready 30s
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
