@@ -3,4 +3,3 @@ skip-check:
   - CKV_AWS_273
   - CKV_AWS_300
   - CKV2_AWS_34
-  - CKV2_AWS_62
