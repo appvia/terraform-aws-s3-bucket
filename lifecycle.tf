@@ -1,37 +1,37 @@
 locals {
   # full_lifecycle_rule_schema is just for documentation, not actually used.
-  full_lifecycle_rule_schema = {
-    enabled = true # bool
-    id      = null # string, must be specified and unique
+  # full_lifecycle_rule_schema = {
+  #   enabled = true # bool
+  #   id      = null # string, must be specified and unique
 
-    abort_incomplete_multipart_upload_days = null # number
-    filter_prefix_only                     = null # string See https://github.com/hashicorp/terraform-provider-aws/issues/23882
-    filter_and = {
-      object_size_greater_than = null # integer >= 0
-      object_size_less_than    = null # integer >= 1
-      prefix                   = null # string
-      tags                     = {}   # map(string)
-    }
-    expiration = {
-      date                         = null # string
-      days                         = null # integer > 0
-      expired_object_delete_marker = null # bool
-    }
-    noncurrent_version_expiration = {
-      newer_noncurrent_versions = null # integer > 0
-      noncurrent_days           = null # integer >= 0
-    }
-    transition = [{
-      date          = null # string
-      days          = null # integer >= 0
-      storage_class = null # string/enum, one of GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, GLACIER_IR.
-    }]
-    noncurrent_version_transition = [{
-      newer_noncurrent_versions = null # integer >= 0
-      noncurrent_days           = null # integer >= 0
-      storage_class             = null # string/enum, one of GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, GLACIER_IR.
-    }]
-  }
+  #   abort_incomplete_multipart_upload_days = null # number
+  #   filter_prefix_only                     = null # string See https://github.com/hashicorp/terraform-provider-aws/issues/23882
+  #   filter_and = {
+  #     object_size_greater_than = null # integer >= 0
+  #     object_size_less_than    = null # integer >= 1
+  #     prefix                   = null # string
+  #     tags                     = {}   # map(string)
+  #   }
+  #   expiration = {
+  #     date                         = null # string
+  #     days                         = null # integer > 0
+  #     expired_object_delete_marker = null # bool
+  #   }
+  #   noncurrent_version_expiration = {
+  #     newer_noncurrent_versions = null # integer > 0
+  #     noncurrent_days           = null # integer >= 0
+  #   }
+  #   transition = [{
+  #     date          = null # string
+  #     days          = null # integer >= 0
+  #     storage_class = null # string/enum, one of GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, GLACIER_IR.
+  #   }]
+  #   noncurrent_version_transition = [{
+  #     newer_noncurrent_versions = null # integer >= 0
+  #     noncurrent_days           = null # integer >= 0
+  #     storage_class             = null # string/enum, one of GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, GLACIER_IR.
+  #   }]
+  # }
 
   lifecycle_configuration_rules = var.lifecycle_configuration_rules == null ? [] : var.lifecycle_configuration_rules
   # Normalize the input, filling in missing fields
@@ -156,7 +156,7 @@ locals {
 
 resource "aws_s3_bucket_lifecycle_configuration" "default" {
   count  = local.enabled && length(local.lc_rules) > 0 ? 1 : 0
-  bucket = join("", aws_s3_bucket.default.*.id)
+  bucket = join("", aws_s3_bucket.default[*].id)
 
   dynamic "rule" {
     for_each = local.lc_rules
