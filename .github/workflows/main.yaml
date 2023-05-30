@@ -224,7 +224,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
       - name: Dry run platform and workspace setup
         run: wf apply -f ./cloudresourceplan --dry-run server
 
